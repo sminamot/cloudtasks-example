@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "github.com/sminamot/cloudtasks-example/task;task";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service TaskAPI {
+  rpc CreateTask(CreateTaskRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/create_task"
+      body: "*"
+    };
+  }
+
+  rpc HandleTask(HandleTaskRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/handle_task"
+      body: "*"
+    };
+  }
+}
+
+message CreateTaskRequest {
+  string name = 1;
+}
+
+message HandleTaskRequest {
+  string name = 1;
+}
