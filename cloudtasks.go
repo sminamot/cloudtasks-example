@@ -60,6 +60,6 @@ func (c *CloudTasksClient) CreateTasks(ctx context.Context, data proto.Message) 
 	}
 
 	//fmt.Println(createdTask)
-	fmt.Printf("created task name: %s", createdTask.GetName())
+	fmt.Printf("created task name: %s\n", createdTask.GetName())
 	return nil
 }

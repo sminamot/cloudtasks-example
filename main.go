@@ -33,11 +33,16 @@ func (s *Server) CreateTask(ctx context.Context, req *task.CreateTaskRequest) (*
 }
 
 func (s *Server) HandleTask(ctx context.Context, req *task.HandleTaskRequest) (*emptypb.Empty, error) {
-	var taskName string
+	var taskName, retryCount string
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		taskName = strings.Join(md.Get("X-CloudTasks-TaskName"), ",")
+		if cs := md.Get("X-CloudTasks-TaskRetryCount"); len(cs) > 0 {
+			retryCount = cs[0]
+		}
 	}
-	fmt.Printf("task_name: %s, name: %s", taskName, req.GetName())
+	fmt.Printf("task_name: %s, name: %s\n", taskName, req.GetName())
+	fmt.Printf("retry_count: %s\n", retryCount)
+
 	return &emptypb.Empty{}, nil
 }
 
@@ -59,7 +64,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "CLOUD_TASKS_HANDLE_ENDPOINT is not set")
 		os.Exit(1)
 	}
-	ct, err := NewCloudTasksClient(ctx, projectID, "asia-northeast1", "test-queue", ctHandleEndpoint)
+	ct, err := NewCloudTasksClient(ctx, projectID, "asia-northeast1", "test-queue2", ctHandleEndpoint)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to create CloudTasksClient:", err)
 		os.Exit(1)
